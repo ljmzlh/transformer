@@ -3,7 +3,7 @@ import argparse
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-def main():
+def run():
 
     parser = argparse.ArgumentParser()
 
@@ -38,4 +38,4 @@ def main():
 
     
 if __name__ == '__main__':
-    main()
+    run()

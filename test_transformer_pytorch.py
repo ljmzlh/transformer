@@ -39,12 +39,13 @@ def modify_args(args):
 	
 	args.b=4
 	args.save_steps=10
+	args.epoch=2
 	args.no_cuda=True
+	args.cuda=False
 
 def test_train(mocker):
 	def side_effect_train(args, *others):
 		modify_args(args)
-		args.mode = 'train'
 		main(args, *others)
 	def side_effect_restore(args, *others):
 		modify_args(args)

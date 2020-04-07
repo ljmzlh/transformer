@@ -38,10 +38,14 @@ def teardown_function(function):
 def modify_args(args):
 	
 	args.b=4
-	args.save_steps=10
+	args.save_steps=200
 	args.epoch=2
 	args.no_cuda=True
 	args.cuda=False
+
+	args.d_model=128
+	args.n_head=2
+	args.n_layers=2
 
 def test_train(mocker):
 	def side_effect_train(args, *others):

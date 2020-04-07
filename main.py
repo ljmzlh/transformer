@@ -126,7 +126,7 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
 
     
 
-    model.eval()
+    '''model.eval()
     total_loss, n_word_total,total_ppl,total_batch= 0,0,0,0
     with torch.no_grad():
         now=0
@@ -163,7 +163,7 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
     if(global_min>dev_ppl):
         global_min=dev_ppl
         state={'net':model.state_dict(),'opt':optimizer._optimizer.state_dict(),'n_steps':optimizer.n_steps}
-        torch.save(state,'./train_state')
+        torch.save(state,'./train_state')'''
 
 def train(model,dm,optimizer,device,opt,dl):
 

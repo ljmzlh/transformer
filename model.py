@@ -32,8 +32,8 @@ class transformer_model(nn.Module):
         self.trg_pad_idx=opt.trg_pad_idx
 
         self.transformer=nn.Transformer(d_model=opt.d_model,nhead=opt.n_head,
-        num_encoder_layers=opt.n_layers,num_decoder_layers=opt.n_layers,
-        dim_feedforward=opt.d_inner_hid,dropout=opt.dropout).to(device)
+        num_encoder_layers=opt.n_layer,num_decoder_layers=opt.n_layer,
+        dim_feedforward=opt.d_inner,dropout=opt.dropout).to(device)
 
         self.scr_word_emb=nn.Embedding(opt.n_src_vocab,opt.d_word_vec,padding_idx=opt.pad_idx)
         self.src_pe=PositionalEncoding(opt.d_word_vec,n_position=opt.n_position)

@@ -120,7 +120,7 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
             total_loss,total_ppl,n_word_total=0,0,0
 
         now=now+1
-        if(global_step%opt.save_steps==0):
+        if(global_step%opt.save_step==0):
             state={'net':model.state_dict(),'opt':optimizer._optimizer.state_dict(),'n_steps':optimizer.n_steps}
             torch.save(state,'./train_state')
 

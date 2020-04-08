@@ -30,8 +30,6 @@ def run():
     parser.add_argument('-no_cuda', action='store_true')
 
     opt = parser.parse_args()
-    opt.cuda = not opt.no_cuda
-    opt.d_word_vec = opt.d_model
 
     from main import main
     main(opt)

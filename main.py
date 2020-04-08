@@ -174,6 +174,8 @@ def train(model,dm,optimizer,device,opt,dl):
         
 
 def main(opt):
+    opt.cuda = not opt.no_cuda
+    opt.d_word_vec = opt.d_model
     opt.batch_size=opt.b
 
     device = torch.device('cuda' if opt.cuda else 'cpu')

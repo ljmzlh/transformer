@@ -32,7 +32,6 @@ def cal_loss(pred, gold, trg_pad_idx):
 def cal_performance(pred, gold, trg_pad_idx):
 
     loss = cal_loss(pred, gold, trg_pad_idx)
-    pred = pred.max(1)[1]
     gold = gold.contiguous().view(-1)
     non_pad_mask = gold.ne(trg_pad_idx)
     n_word = non_pad_mask.sum().item()
@@ -42,7 +41,8 @@ def cal_performance(pred, gold, trg_pad_idx):
 def cal_ppl(trg_seq,prob,dl):
     trg_seq=trg_seq.transpose(0,1)
     prob=prob.transpose(0,1)
-
+    
+    
     metric= cotk.metric.PerplexityMetric(dl)
     prob_seq=torch.nn.functional.log_softmax(prob.double(),dim=2,dtype=torch.double)
     
@@ -61,7 +61,6 @@ def cal_ppl(trg_seq,prob,dl):
     ppl=metric.close()
     return ppl
 
-
 def patch_src(src, pad_idx):
     return src
 
@@ -69,14 +68,12 @@ def patch_trg(trg, pad_idx):
     trg, gold ,tt= trg[:-1, :], trg[1:, :].contiguous().view(-1),trg[:, :]
     return trg, gold,tt
 
-
 def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
     
     global global_step
-    global global_min
 
     model.train()
-    total_loss, n_word_total,total_ppl = 0, 0 ,0
+    total_loss, n_word_total= 0, 0 
     now=0
     key='train'
     dm.restart(key, opt.batch_size, shuffle=False)
@@ -85,13 +82,12 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
         incoming = get_next_batch(dm, key, restart=False)
         if incoming is None:
             break
-        print(now)
 
         src_seq = patch_src(incoming.data.post, opt.src_pad_idx).to(device)
-        trg_seq, gold , trg= map(lambda x: x.to(device), patch_trg(incoming.data.resp, opt.trg_pad_idx))
+        trg_seq, gold , _= map(lambda x: x.to(device), patch_trg(incoming.data.resp, opt.trg_pad_idx))
 
 
-        pred,prob = model(src_seq, trg_seq,device)
+        pred,_ = model(src_seq, trg_seq,device)
         loss, n_word = cal_performance(pred, gold, opt.trg_pad_idx) 
 
         loss=loss/opt.grad_step
@@ -104,20 +100,14 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
             global_step+=1
             optimizer.zero_grad()
 
-        ppl=1##cal_ppl(trg,prob,dl)['perplexity']
-        ppl=np.log(ppl)
-
         n_word_total+=n_word
         total_loss+=loss.item()*opt.grad_step
-        total_ppl+=ppl
 
         if((now+1)%opt.grad_step==0):
             res_loss=total_loss/n_word_total
-            res_ppl=np.exp(total_ppl/opt.grad_step)
-            print('epoch ',now_epoch,' train ',now,' : ',res_loss,res_ppl)
+            print('epoch ',now_epoch,' train ',now,' : ',res_loss)
             writer.add_scalar('train_loss',res_loss,global_step)
-            writer.add_scalar('train_ppl',res_ppl,global_step)
-            total_loss,total_ppl,n_word_total=0,0,0
+            total_loss,n_word_total=0,0
 
         now=now+1
         if(global_step%opt.save_step==0):
@@ -125,13 +115,16 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
             torch.save(state,'./train_state')
 
     
+def dev_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
+    
+    global global_min
 
-    '''model.eval()
-    total_loss, n_word_total,total_ppl,total_batch= 0,0,0,0
+    model.eval()
+    total_ppl,total_batch= 0,0
     with torch.no_grad():
         now=0
         key='dev'
-        dm.restart(key, 1, shuffle=False)
+        dm.restart(key, opt.batch_size, shuffle=False)
         while True:
             incoming = get_next_batch(dm, key, restart=False)
             if incoming is None:
@@ -139,31 +132,28 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
             src_seq = patch_src(incoming.data.post, opt.src_pad_idx).to(device)
             trg_seq, gold , trg= map(lambda x: x.to(device), patch_trg(incoming.data.resp, opt.trg_pad_idx))
 
-            pred,prob = model(src_seq, trg_seq,device)
-
-            loss, n_word = cal_performance(pred, gold, opt.trg_pad_idx) 
+            _,prob = model(src_seq, trg_seq,device)
             
             ppl=cal_ppl(trg,prob,dl)['perplexity']
             
             ppl=np.log(ppl)
 
-            n_word_total+=n_word
-            total_loss+=loss.item()
             total_ppl+=ppl
             
             now=now+1
             total_batch+=1
-            print('epoch ',now_epoch,' dev ',now,' : ',loss.item()/n_word,np.exp(ppl))
+            print('epoch ',now_epoch,' dev ',now,' : ',np.exp(ppl))
 
-    dev_loss=total_loss/n_word_total
     dev_ppl=np.exp(total_ppl/total_batch)
-    writer.add_scalar('dev_loss',dev_loss,now_epoch)
     writer.add_scalar('dev_ppl',dev_ppl,now_epoch)
+
+    state={'net':model.state_dict(),'opt':optimizer._optimizer.state_dict(),'n_steps':optimizer.n_steps}
+    torch.save(state,'./dev_last')
 
     if(global_min>dev_ppl):
         global_min=dev_ppl
         state={'net':model.state_dict(),'opt':optimizer._optimizer.state_dict(),'n_steps':optimizer.n_steps}
-        torch.save(state,'./train_state')'''
+        torch.save(state,'./dev_best')
 
 def train(model,dm,optimizer,device,opt,dl):
 
@@ -171,9 +161,9 @@ def train(model,dm,optimizer,device,opt,dl):
 
     for i in range(opt.epoch):
         train_epoch(i,model,dm,optimizer,device,opt,writer,dl)
+        dev_epoch(i,model,dm,optimizer,device,opt,writer,dl)
         
-
-def main(opt):
+def train_process(opt):
     opt.cuda = not opt.no_cuda
     opt.d_word_vec = opt.d_model
     opt.batch_size=opt.b
@@ -184,13 +174,10 @@ def main(opt):
     data_arg = Storage()
     data_arg.file_id = opt.datapath
     data_arg.min_vocab_times=20
-    wordvec_class = Glove
 
     def load_dataset(data_arg, wvpath, embedding_size):
         dm = data_class	(**data_arg)
         return dm
-
-    volatile = Storage()
 
     opt.n_position=100
     dm= load_dataset(data_arg, None, opt.n_position)
@@ -219,6 +206,20 @@ def main(opt):
     
     dl=cotk.dataloader.OpenSubtitles(opt.datapath,min_vocab_times=data_arg.min_vocab_times)
     train(model,dm,optimizer,device,opt,dl)
+
+
+
+
+
+def main(opt):
+    from test import test_process
+
+    if(opt.mode=='train'):
+        train_process(opt)
+    elif(opt.mode=='test'):
+        test_process(opt)
+    else:
+        raise ValueError("Unknown mode")
 
 def _preprocess_batch(data):
 		incoming = Storage()

@@ -9,12 +9,14 @@ def run():
 
     parser.add_argument('-restore',default=None)
     parser.add_argument('-datapath', default='./dataset')
+    parser.add_argument('-mode',default='train')
 
     parser.add_argument('-epoch', type=int, default=100)
     parser.add_argument('-b', type=int, default=2048)
     parser.add_argument('-grad_step',type=int,default=1)
     parser.add_argument('-save_step', type=int, default=1000)
     parser.add_argument('-lr', type=float, default=1)
+    parser.add_argument('-topk',type=int,default=5)
 
     parser.add_argument('-d_model', type=int, default=512)
     parser.add_argument('-d_inner', type=int, default=2048)
@@ -28,6 +30,7 @@ def run():
     parser.add_argument('-dropout', type=float, default=0.1)
 
     parser.add_argument('-no_cuda', action='store_true')
+
 
     opt = parser.parse_args()
 

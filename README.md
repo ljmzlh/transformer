@@ -1,7 +1,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/ljmzlh/transformer/badge.svg?branch=master)](https://coveralls.io/github/ljmzlh/transformer?branch=master)
 [![Build Status](https://travis-ci.com/ljmzlh/transformer.svg?branch=master)](https://travis-ci.com/ljmzlh/transformer)
 
-# Transformer
+# Transformer(Pytorch)
 
 
 A Transformer language model in pytorch.
@@ -33,7 +33,7 @@ arXiv:1706.03762.
 ## Arguments
 
 ```none
-usage: run.py [-restore RESTORE] [-datapath DATAPATH]
+usage: run.py [-mode MODE] [-restore RESTORE] [-datapath DATAPATH]
               [-epoch EPOCH] [-b BATCH_SIZE]
               [-grad_step GRAD_STEP] [-save_steps SAVE_STEPS]
               [-lr LR] [-d_model D_MODEL]
@@ -43,10 +43,9 @@ usage: run.py [-restore RESTORE] [-datapath DATAPATH]
               [-warmup WARMUP] [-dropout DROPOUT] 
               [-no_cuda]
 
-A language model with GRU. Attention, beamsearch, dropout and batchnorm is
-supported.
-
 optional arguments:
+  -mode MODE            "train" or "test"
+                        Default: train
   -restore RESOTRE      The path of the checkpoint you want to load. 
                         Use it to resume training or test a checkpoint.
                         Default: None
@@ -85,13 +84,21 @@ optional arguments:
   -no_cuda              Use CPU.
 ```
 
-## Example
+## Tensorboard Example
 
-WAIT FOR UPDATE
+Excute ```tensorboard --logdir=./runs```
+You will see plot below
+![avatar](./plot.png)
+You can see train loss and dev ppl during training.
 
 ## Performance
 
-WAIT FOR UPDATE
+Performance on newstest2013(dev).
+
+$ $ | $N$ |  $d_{model}$ | $d_{ff}$  | $h$ | $d_k$ | $d_v$ | $P_{drop}$ | PPL | BLEU
+-|-|-|-|-|-|-|-|-|-
+base | 6 | 512 | 2048 | 8 | 64| 64 |0.1 | 5.70 | 0.23
+$ $ | 2 | 512 | 2048 | 8 | 64| 64 |0.1 | 10.60 | 0.19
 
 ## Author
 

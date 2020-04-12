@@ -87,9 +87,16 @@ optional arguments:
 ## Tensorboard Example
 
 Excute ```tensorboard --logdir=./runs```
-You will see plot below
-![avatar](./plot.png)
+You will see plot below</br>
+
+<div align=center>
+	<img src="./plot.png" width="">
+</div>
+
+</br>
+
 You can see train loss and dev ppl during training.
+
 
 ## Performance
 

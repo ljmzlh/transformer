@@ -89,7 +89,7 @@ optional arguments:
 Excute ```tensorboard --logdir=./runs```
 You will see plot below</br>
 
-<div align=center>
+<div align=left>
 	<img src="./plot.png" width="">
 </div>
 

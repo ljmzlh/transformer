@@ -95,15 +95,11 @@ You can see train loss and dev ppl during training.
 
 Performance on newstest2013(dev).
 
-$ $ | $N$ |  $d_{model}$ | $d_{ff}$  | $h$ | $d_k$ | $d_v$ | $P_{drop}$ | PPL | BLEU
+ &ensp; | N |  d_model | d_inner  | n_head | d_k | d_v | dropout | PPL | BLEU
 -|-|-|-|-|-|-|-|-|-
 base | 6 | 512 | 2048 | 8 | 64| 64 |0.1 | 5.70 | 0.23
-$ $ | 2 | 512 | 2048 | 8 | 64| 64 |0.1 | 10.60 | 0.19
+ &ensp; | 2 | 512 | 2048 | 8 | 64| 64 |0.1 | 10.60 | 0.19
 
 ## Author
 
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({ tex2jax: {inlineMath: [['$', '$']]}, messageStyle: "none" });
-</script>

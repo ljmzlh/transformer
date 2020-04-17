@@ -11,7 +11,7 @@ from cotk.dataloader import SingleTurnDialog
 from cotk.wordvector import WordVector, Glove
 import cotk
 
-from model import transformer_model
+from model_new import transformer_model
 from tensorboardX import SummaryWriter
 import numpy as np
 from Translator import Translator
@@ -51,6 +51,8 @@ def cal_bleu(trg_seq,gen_seq,dl):
     trg_seq=trg_seq.transpose(0,1).tolist()
     ##gen_seq=gen_seq.transpose(0,1).cpu().numpy()
     gen_seq=gen_seq.view(1,-1).tolist()
+    print(trg_seq)
+    print(gen_seq)
     
     reference_allvocabs_key = "ref_allvocabs"
     gen_key = "gen"

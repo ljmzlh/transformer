@@ -104,7 +104,7 @@ Performance on newstest2013(dev).
 
  &ensp; | N |  d_model | d_inner  | n_head | d_k | d_v | dropout | PPL | BLEU
 -|-|-|-|-|-|-|-|-|-
-base | 6 | 512 | 2048 | 8 | 64| 64 |0.1 | 5.70 | 0.23
+base | 6 | 512 | 2048 | 8 | 64| 64 |0.1 | 5.70 | 24.4
  &ensp; | 2 | 512 | 2048 | 8 | 64| 64 |0.1 | 10.60 | 0.19
 
 ## Author

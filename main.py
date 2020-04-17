@@ -15,7 +15,7 @@ from cotk.dataloader import SingleTurnDialog
 from cotk.wordvector import WordVector, Glove
 import cotk
 
-from model import transformer_model
+from model_new import transformer_model
 from tensorboardX import SummaryWriter
 import numpy as np
 
@@ -48,7 +48,12 @@ def cal_ppl(trg_seq,prob,dl):
     
     len_seq=[]
     for i in range(trg_seq.size(0)):
-        len_seq.append(trg_seq.size(1))
+        t=trg_seq.size(1)
+        for j in range(trg_seq.size(1)):
+            if(trg_seq[i][j]==3):
+                t=j+1
+                break
+        len_seq.append(t)
         
         
     reference_allvocabs_key="ref_allvocabs"
@@ -86,8 +91,8 @@ def train_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
         src_seq = patch_src(incoming.data.post, opt.src_pad_idx).to(device)
         trg_seq, gold , _= map(lambda x: x.to(device), patch_trg(incoming.data.resp, opt.trg_pad_idx))
 
-
-        pred,_ = model(src_seq, trg_seq,device)
+        pred,prob = model(src_seq, trg_seq)
+        ##print(prob.shape)
         loss, n_word = cal_performance(pred, gold, opt.trg_pad_idx) 
 
         loss=loss/opt.grad_step
@@ -132,7 +137,7 @@ def dev_epoch(now_epoch,model,dm,optimizer,device,opt,writer,dl):
             src_seq = patch_src(incoming.data.post, opt.src_pad_idx).to(device)
             trg_seq, gold , trg= map(lambda x: x.to(device), patch_trg(incoming.data.resp, opt.trg_pad_idx))
 
-            _,prob = model(src_seq, trg_seq,device)
+            _,prob = model(src_seq, trg_seq)
             
             ppl=cal_ppl(trg,prob,dl)['perplexity']
             

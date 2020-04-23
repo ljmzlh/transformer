@@ -5,6 +5,7 @@ from torch.autograd import Variable
 from module import clones,LayerNorm,subsequent_mask
 
 class Generator(nn.Module):
+    "Define standard linear + softmax generation step."
     def __init__(self, d_model, vocab):
         super(Generator, self).__init__()
         self.proj = nn.Linear(d_model, vocab)
@@ -13,17 +14,20 @@ class Generator(nn.Module):
         return F.log_softmax(self.proj(x), dim=-1)
 
 class Encoder(nn.Module):
+    "Core encoder is a stack of N layers"
     def __init__(self, layer, N):
         super(Encoder, self).__init__()
         self.layers = clones(layer, N)
         self.norm = LayerNorm(layer.size)
         
     def forward(self, x, mask):
+        "Pass the input (and mask) through each layer in turn."
         for layer in self.layers:
             x = layer(x, mask)
         return self.norm(x)
 
 class Decoder(nn.Module):
+    "Generic N layer decoder with masking."
     def __init__(self, layer, N):
         super(Decoder, self).__init__()
         self.layers = clones(layer, N)
@@ -46,6 +50,7 @@ class EncoderDecoder(nn.Module):
         self.trg_word_prj=nn.Linear(opt.d_model,opt.n_trg_vocab)
         
     def forward(self, src, tgt):
+        "Take in and process masked src and target sequences."
         src=src.transpose(0,1)
         tgt=tgt.transpose(0,1)
 

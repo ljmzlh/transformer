@@ -20,7 +20,6 @@ from tensorboardX import SummaryWriter
 import numpy as np
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 def cal_loss(pred, gold, trg_pad_idx):

@@ -22,6 +22,10 @@ arXiv:1706.03762.
 
 * Install ``CoTK`` following [instructions](https://github.com/thu-coai/cotk#installation).
 * Using ... to download codes.
+* Prepare dataset. Data should be named as 
+  * opensub_pair_train.en/de
+  * opensub_pair_dev.en/de
+  * opensub_pair_test.en/de
 * Execute ``python run.py`` to train the model.
   * If you don't have GPUs, you can add `-no_cuda` for switching to CPU, but it may cost very long time for either training or test.
 * You can view training process by tensorboard, the log is at `./runs`.
@@ -101,11 +105,16 @@ You can see train loss and dev ppl during training.
 ## Performance
 
 Performance on newstest2013(dev).
+[ Train until dev ppl stops decreasing or for 10 epochs]
 
- &ensp; | N |  d_model | d_inner  | n_head | d_k | d_v | dropout | PPL | BLEU
+ &ensp; | N |  d_model | d_inner  | n_head | d_k | d_v | dropout | PPL | BLEU(%)
 -|-|-|-|-|-|-|-|-|-
-base | 6 | 512 | 2048 | 8 | 64| 64 |0.1 | 5.70 | 24.4
- &ensp; | 2 | 512 | 2048 | 8 | 64| 64 |0.1 | 10.60 | 0.19
+base | 6 | 512 | 2048 | 8 | 64| 64 |0.1 | 4.54 | 27.2
+&ensp; | 6 | 512 | 2048 | 1 | 512 | 512 |0.1 | 6.34| 22.1
+&ensp; | 2 | 512 | 2048 | 8 | 64| 64 |0.1 | 10.60 | 19.0
+&ensp; | 6 | 512 | 2048 | 8 | 64| 64 |0 | 4.51 | 26.8
+&ensp; | 6 | 512 | 2048 | 8 | 64| 64 |0.2 | 4.31 | 27.8
+
 
 ## Author
 

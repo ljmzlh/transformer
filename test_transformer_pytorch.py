@@ -53,6 +53,10 @@ def test_train(mocker):
 		main(args, *others)
 	def side_effect_restore(args, *others):
 		modify_args(args)
+		args.mode = 'test'
+		main(args, *others)
+	def side_effect_restore(args, *others):
+		modify_args(args)
 		args.mode = 'train'
 		args.restore = 'last'
 		main(args, *others)
@@ -62,6 +66,8 @@ def test_train(mocker):
 		args.cache = True
 		main(args, *others)
 	mock = mocker.patch('main.main', side_effect=side_effect_train)
+	run()
+	mock.side_effect = side_effect_test
 	run()
 	'''mock.side_effect = side_effect_restore
 	run()

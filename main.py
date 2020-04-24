@@ -19,7 +19,6 @@ from model_new import transformer_model
 from tensorboardX import SummaryWriter
 import numpy as np
 
-import os
 
 
 def cal_loss(pred, gold, trg_pad_idx):

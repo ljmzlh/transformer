@@ -36,7 +36,6 @@ def teardown_function(function):
 	shutil.rmtree(os.path.join(cwd, 'cache_test'), ignore_errors=True)
 
 def modify_args(args):
-	
 	args.b=4
 	args.save_step=200
 	args.epoch=2
@@ -51,7 +50,7 @@ def test_train(mocker):
 	def side_effect_train(args, *others):
 		modify_args(args)
 		main(args, *others)
-	def side_effect_restore(args, *others):
+	def side_effect_test(args, *others):
 		modify_args(args)
 		args.mode = 'test'
 		main(args, *others)
